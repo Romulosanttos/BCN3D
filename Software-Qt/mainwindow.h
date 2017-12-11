@@ -18,6 +18,8 @@
 #include "grayimage.h"
 #include "binaryimage.h"
 #include "client.h"
+#include "SistemasdeControle/headers/optimizationLibs/pso.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -37,11 +39,19 @@ public:
 
     void processamentoImagem();
 
+    void calcularAngulos(LinAlg::Matrix<double> posicoes);
+    void calcularTrajetoria();
+    LinAlg::Matrix<double> MoveX(LinAlg::Matrix<double> posicao, double p);
+    LinAlg::Matrix<double> MoveY(LinAlg::Matrix<double> posicao, double p);
+    LinAlg::Matrix<double> MoveZ(LinAlg::Matrix<double> posicao, double p);
+
+
 public slots:
 
 
 private slots:
-    void update();
+
+    bool checkCameras(void);
 
     void Conectado();
 
@@ -49,13 +59,14 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void timerClock( unsigned clockTime);
-
     void result_view(QImage &img,bool state = true,bool colors=true);
 
     void enableTab(int except);
 
     void disableTab(int except);
+
+
+
 
 // funcoes matematicas
     void filtro(const ImageProcessing::GrayImage<unsigned> &gray_img,const double    filter_value,const bool color,const unsigned scale = 3);
@@ -121,7 +132,6 @@ private slots:
 
     void on_button_red_4_clicked();
 
-
     void on_set_saved_img_0_clicked(bool checked);
 
     void on_button_red_5_clicked();
@@ -140,8 +150,23 @@ private slots:
 
     void on_actionusar_imagem_salva_triggered();
 
+    void on_pushButton_GetPositions_clicked();
+
+    void on_pushButton_GetTrack_clicked();
+
+    void on_pushButton_Enviar_clicked();
+
+    void on_lineEdit_returnPressed();
+
+    void on_pushButton_GenSteps_clicked();
+
+    void on_ImageProcess_clicked();
+
+    void on_resizeImg_valueChanged(int value);
+
+    void on_actionProcessar_triggered();
+
 signals :
-    void emit_result();
 
 private:
     Dialog *result_img;
@@ -156,18 +181,25 @@ private:
     ImageProcessing::RGBImage<unsigned>*mat_complete,*rgb_blue,*rgb_red;
     ImageProcessing::GrayImage<unsigned>*gray_blue,*gray_red;
     LinAlg::Matrix<unsigned> *histogramMatrix;
-    LinAlg::Matrix<unsigned> posicao;
     LinAlg::Matrix<unsigned> qdt, segmentedMatrix;
     LinAlg::Matrix<unsigned> centroids;
 
+    LinAlg::Matrix<unsigned> posicao;
+    LinAlg::Matrix<double> angulos;
+    LinAlg::Matrix<double> trajetoria;
+    LinAlg::Matrix<double> steps;
+    LinAlg::Matrix<int> stepstrack;
+
+
 //    LinAlg::Matrix<unsigned> *centroid;
+    unsigned camCount;
     ImageProcessing::BinaryImage *bina_blue,*bina_red;
     int select_blue_0_index,select_red_0_index;
     int select_blue_1_index,select_red_1_index;
     unsigned area_blue[2],area_red[2];
 
 //   VARIAVEIS WIFI
-    QPixmap mypix = (QDir::currentPath()+"/compressedImage.jpg");
+    QPixmap mypix = (QDir::currentPath()+"/imageCaptured.jpg");
     Client *wifi;
     QString dataToSend;
 
